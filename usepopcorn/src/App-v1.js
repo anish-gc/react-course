@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const tempMovieData = [
   {
@@ -50,23 +50,9 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const apiKey = "1918d1ac";
-
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-  const query = "interstellar";
-
-  useEffect(function () {
-    async function fetchMovies() {
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${apiKey}&s=${query}`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-    }
-    fetchMovies();
-  },[]);
 
   return (
     <>
@@ -78,7 +64,7 @@ export default function App() {
         <Box>
           <MoviesList movies={movies} />
         </Box>
-        <Box>
+         <Box>
           <WatchedMoviesSummary watched={watched} />
           <WatchedMoviesList watched={watched} />
         </Box>
@@ -141,7 +127,7 @@ function Box({ children }) {
       >
         {isOpen1 ? "–" : "+"}
       </button>
-      {isOpen1 && children}
+      {isOpen1 &&  children }
     </div>
   );
 }
@@ -160,7 +146,7 @@ function Box({ children }) {
 //         {isOpen2 ? "–" : "+"}
 //       </button>
 //       {isOpen2 && (
-
+       
 //       )}
 //     </div>
 //   );
@@ -176,6 +162,7 @@ function MoviesList({ movies }) {
   );
 }
 
+
 function Movie({ movie }) {
   return (
     <li key={movie.imdbID}>
@@ -190,6 +177,7 @@ function Movie({ movie }) {
     </li>
   );
 }
+
 
 function WatchedMoviesList({ watched }) {
   return (
