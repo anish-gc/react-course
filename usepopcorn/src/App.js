@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 const tempMovieData = [
   {
@@ -55,18 +55,33 @@ const apiKey = "1918d1ac";
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
-  const query = "interstellar";
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const query = "cwvwr";
 
   useEffect(function () {
     async function fetchMovies() {
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${apiKey}&s=${query}`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-    }
+      try{
+
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${apiKey}&s=${query}`
+        );
+        if(!res.ok)
+          throw new Error("Somwthing went wronf with fetching the movies")
+        const data = await res.json();
+        if(data.Response === 'False') throw new Error("Movie  not found")
+        setMovies(data.Seasrch);
+        // console.log(data)
+      }catch(err){
+        console.error(err.message)
+        setError(err.message);
+      } finally {
+        setIsLoading(false)
+      }
+      }
     fetchMovies();
-  },[]);
+  }, []);
 
   return (
     <>
@@ -76,7 +91,10 @@ export default function App() {
       </NavBar>
       <Main>
         <Box>
-          <MoviesList movies={movies} />
+         {/* { isLoading ? <Loader/> : <MoviesList movies={movies} />} */}
+         {isLoading && <Loader />}
+         {isLoading && !error  &&  <MoviesList movies={movies} />}
+         {error && <ErrorMessage message={error}/>}
         </Box>
         <Box>
           <WatchedMoviesSummary watched={watched} />
@@ -165,6 +183,18 @@ function Box({ children }) {
 //     </div>
 //   );
 // }
+
+function Loader() {
+  return <p className="loader">Loading...</p>;
+}
+
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>⛔️</span> {message}
+    </p>
+  );
+}
 
 function MoviesList({ movies }) {
   return (
