@@ -134,7 +134,10 @@ export default function App() {
           ) : (
             <>
               <WatchedMoviesSummary watched={watched} />
-              <WatchedMoviesList watched={watched}  onDelete={handleDeleteWatched}/>
+              <WatchedMoviesList
+                watched={watched}
+                onDelete={handleDeleteWatched}
+              />
             </>
           )}
         </Box>
@@ -290,6 +293,15 @@ function MovieDetails({ selectedId, onClose, onAddWatched, watched }) {
     },
     [selectedId]
   );
+
+  useEffect(function() {
+    if(!title) return
+    document.title = `Movie:${title}`
+
+    return  function(){
+      document.title = 'usePopCorn';
+    }
+  }, [title])
   return (
     <div className="details">
       {isLoading ? (
@@ -364,7 +376,7 @@ function WatchedMoviesList({ watched, onDelete }) {
   );
 }
 
-function WatchedMovie({ movie , onDelete}) {
+function WatchedMovie({ movie, onDelete }) {
   return (
     <li key={movie.imdbID}>
       <img src={movie.poster} alt={`${movie.title} poster`} />
@@ -382,7 +394,9 @@ function WatchedMovie({ movie , onDelete}) {
           <span>⏳</span>
           <span>{movie.runtime} min</span>
         </p>
-        <button className="btn-delete" onClick={()=>onDelete(movie.imdbID)}>X</button>
+        <button className="btn-delete" onClick={() => onDelete(movie.imdbID)}>
+          X
+        </button>
       </div>
     </li>
   );
